@@ -26,6 +26,10 @@ server.post('/collect', function (req, res, next) {
                 redisClient.hmset(`${req.body.provider}:${req.body.proxy}`, {xdaili: valid});
             });
 
+            chech_service.bugng(req.body.proxy).then(valid => {
+                redisClient.hmset(`${req.body.provider}:${req.body.proxy}`, {bugng: valid});
+            });
+
             res.json(200, {
                 statusCode: 200,
                 message: "OK"
