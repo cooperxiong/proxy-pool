@@ -1,0 +1,21 @@
+{
+  "name": "rest",
+  "version": "1.0.0",
+  "description": "rest",
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "author": "Cooper",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "co": "^4.6.0",
+    "lodash": "^4.17.4",
+    "mongodb": "^2.2.31",
+    "node-schedule": "^1.2.5",
+    "pino": "^4.7.2",
+    "redis": "^2.8.0",
+    "request": "^2.81.0",
+    "restify": "^6.0.0"
+  }
+}

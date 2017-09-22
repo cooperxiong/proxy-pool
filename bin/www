@@ -1,0 +1,9 @@
+/**
+ * Created by Cooper on 2017/09/19.
+ */
+let app = require('../app');
+require('../routes/index');
+require('../routes/service');
+let start = app.listen.bind(app, 2345);
+console.log("listening on 2345...");
+start();
