@@ -35,17 +35,3 @@ request.post({
 }, function (err, res, body) {
     console.log(body);
 })
-
-// let i = 40;
-// while (i--) {
-//     request.post({
-//         url: url + '/collect',
-//         json: {
-//             provider:_.sample(['a','b','c']) ,
-//             proxy: `http://127.0.0.3:${i}`,
-//             expiration: 60 * 60
-//         }
-//     }, function (err, res, body) {
-//         console.log(body);
-//     })
-// }

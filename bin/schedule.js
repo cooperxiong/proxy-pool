@@ -9,8 +9,8 @@ const xdaili = require('../lib/collect_service').xdaili;
 const bugng = require('../lib/collect_service').bugng;
 log.info('schedules start');
 //
-const j = schedule.scheduleJob('*/5 * * * * *', function () { // for dev
-// const j = schedule.scheduleJob('*/5 * * * *', function () {
+// const j = schedule.scheduleJob('*/5 * * * * *', function () { // for dev
+const j = schedule.scheduleJob('*/5 * * * *', function () {
 
     request.post({
         url: "http://localhost:2345/provide",

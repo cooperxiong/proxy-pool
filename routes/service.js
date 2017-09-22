@@ -56,7 +56,6 @@ server.post('/provide', function (req, res, next) {
             pool.scanTime = Date.now()
         }
         let items = _.filter(pool.proxys, e => e[req.body.channel] === 'true');
-        console.log(items);
         if (items.length === 0) {
             res.json(429, {
                 statusCode: 429,
@@ -64,18 +63,21 @@ server.post('/provide', function (req, res, next) {
             })
         } else {
             let choice = _.sample(items);
-            _.chain(pool.proxys).find({proxy: choice.proxy}).merge(_.set({}, req.body.channel, !1)).value();
-            redisClient.hmset(`${choice.provider}:${choice.proxy}`, _.set({}, req.body.channel, !1));
+
+            // if currently used, set false, when released set true only if the pool is large enough.
+            // _.chain(pool.proxys).find({proxy: choice.proxy}).merge(_.set({}, req.body.channel, !1)).value();
+            // redisClient.hmset(`${choice.provider}:${choice.proxy}`, _.set({}, req.body.channel, !1));
 
             res.json(200, {
                 statusCode: 200,
-                proxy: _.sample(items).proxy
+                proxy: choice.proxy
             })
         }
     }).catch(err => {
         log.info(err);
     });
 });
+
 
 server.post('/refresh', function (req, res, next) {
     let available = req.body.available;
@@ -89,16 +91,17 @@ server.post('/refresh', function (req, res, next) {
 });
 
 
+server.get('/stats', function (req, res, next) {
+    redisClient.vscan().then(ret => {
+        res.json(ret);
+    }).catch(err => console.log)
+});
+
+
 function setAvailable(proxy, channel) {
 }
 
 function setUnavailable(proxy, channel) {
 }
-
-server.get('/stats', function (req, res, next) {
-    res.json({a: 1});
-});
-
-
 
 
