@@ -13,13 +13,13 @@ Collecting some free proxys from the provider's website, save them to redis, and
 
 ## Run
 
+install [nodejs](https://nodejs.org) at first.
+
 ```bash
 npm start
 ```
 
 ## API
-
-
 
 <b>POST /collect</b>
 
@@ -80,7 +80,7 @@ or
 }
 ```
 
-GET /stats
+<b>GET /stats</b>
 
 get all proxys from the pool
 
@@ -94,7 +94,6 @@ get all proxys from the pool
 {"provider":"bugng","proxy":"HTTP://183.15.180.222:9797","expiration":"600","xdaili":"true","bugng":"false"},
 {"provider":"bugng","proxy":"HTTP://180.97.235.30:80","expiration":"600","xdaili":"true","bugng":"true"}]
 ```
-
 
 ## Tests
 
