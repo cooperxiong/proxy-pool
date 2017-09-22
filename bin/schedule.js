@@ -8,6 +8,7 @@ const schedule = require('node-schedule');
 const xdaili = require('../lib/collect_service').xdaili;
 log.info('schedules start');
 //
+// const j = schedule.scheduleJob('*/5 * * * * *', function () { // for dev
 const j = schedule.scheduleJob('*/5 * * * *', function () {
 
     request.post({
@@ -22,7 +23,7 @@ const j = schedule.scheduleJob('*/5 * * * *', function () {
                 res.map(e => request.post({
                     url: "http://localhost:2345/collect",
                     json: {
-                        provider: xdaili,
+                        provider: 'xdaili',
                         proxy: e,
                         expiration: 10 * 60
                     }

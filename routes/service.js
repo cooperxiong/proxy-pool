@@ -1,12 +1,13 @@
 /**
  * Created by Cooper on 2017/9/19.
  */
-const _ = require('lodash');
+
 const co = require('co');
+const _ = require('lodash');
 const log = require('pino')().child({file: __filename.slice(__dirname.length + 1, -3)});
-const request = require('request');
 const server = require('../app');
 const redisClient = require('../lib/redis_client');
+const chech_service = require('../lib/check_service');
 
 const pool = {proxys: [], scanTime: null};
 
@@ -16,10 +17,15 @@ const pool = {proxys: [], scanTime: null};
 server.post('/collect', function (req, res, next) {
     console.log(req.body);
     co(function* () {
-        const valid = yield firstCheck(req.body.proxy);
+        const valid = yield chech_service.baidu(req.body.proxy);
         if (valid) {
             yield redisClient.hmset(`${req.body.provider}:${req.body.proxy}`, req.body);
             redisClient.expire(`${req.body.provider}:${req.body.proxy}`, req.body.expiration);
+
+            chech_service.xdaili(req.body.proxy).then(valid => {
+                redisClient.hmset(`${req.body.provider}:${req.body.proxy}`, {xdaili: valid});
+            });
+
             res.json(200, {
                 statusCode: 200,
                 message: "OK"
@@ -27,14 +33,12 @@ server.post('/collect', function (req, res, next) {
         } else {
             res.json(416, {
                 statusCode: 416,
-                message: "invalid"
+                message: "first check invalid"
             });
         }
     }).catch(err => {
         log.info(err);
-
     });
-
 });
 
 /*
@@ -67,7 +71,6 @@ server.post('/provide', function (req, res, next) {
     }).catch(err => {
         log.info(err);
     });
-
 });
 
 server.post('/refresh', function (req, res, next) {
@@ -93,33 +96,5 @@ server.get('/stats', function (req, res, next) {
 });
 
 
-function firstCheck(proxy) {
-    return new Promise(function (resolve, reject) {
-        setTimeout(() => resolve(!1), 5000);
-        let options = {
-            url: "https://www.baidu.com/",
-            headers: {
-                "Host": "www.baidu.com",
-                "Connection": "keep-alive",
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.91 Safari/537.36",
-                "Upgrade-Insecure-Requests": "1",
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
-                "Accept-Encoding": "gzip, deflate, br",
-                "Accept-Language": "zh-CN,zh;q=0.8,en;q=0.6",
-            },
-            gzip: true,
-            proxy,
-        };
-        request(options, function (err, res, body) {
-            if (err) {
-                resolve(!1);
-            } else if (res.statusCode === 200) {
-                console.log("valid 200");
-                resolve(!0);
-            } else {
-                resolve(!1)
-            }
-        })
-    })
-}
+
 
