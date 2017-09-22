@@ -7,3 +7,4 @@ require('../routes/service');
 let start = app.listen.bind(app, 2345);
 console.log("listening on 2345...");
 start();
+require('./schedule');

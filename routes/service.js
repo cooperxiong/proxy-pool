@@ -4,6 +4,7 @@
 const _ = require('lodash');
 const co = require('co');
 const log = require('pino')().child({file: __filename.slice(__dirname.length + 1, -3)});
+const request = require('request');
 const server = require('../app');
 const redisClient = require('../lib/redis_client');
 
@@ -26,14 +27,14 @@ server.post('/collect', function (req, res, next) {
         } else {
             res.json(416, {
                 statusCode: 416,
-                message: "OK"
+                message: "invalid"
             });
         }
     }).catch(err => {
         log.info(err);
-        return next(err)
+
     });
-    return next();
+
 });
 
 /*
@@ -47,11 +48,10 @@ server.post('/provide', function (req, res, next) {
             pool.scanTime = Date.now()
         }
         let items = _.filter(pool.proxys, e => e[req.body.channel] === 'true');
-        
         console.log(items);
         if (items.length === 0) {
-            res.json(204, {
-                statusCode: 204,
+            res.json(429, {
+                statusCode: 429,
                 message: `Proxys for channel ${req.body.channel} are exhausted.`
             })
         } else {
@@ -65,9 +65,9 @@ server.post('/provide', function (req, res, next) {
             })
         }
     }).catch(err => {
-        return next(err);
+        log.info(err);
     });
-    return next();
+
 });
 
 server.post('/refresh', function (req, res, next) {
@@ -79,7 +79,6 @@ server.post('/refresh', function (req, res, next) {
         statusCode: 200,
         message: "Refresh successfully."
     });
-    return next();
 });
 
 
@@ -91,7 +90,6 @@ function setUnavailable(proxy, channel) {
 
 server.get('/stats', function (req, res, next) {
     res.json({a: 1});
-    return next();
 });
 
 

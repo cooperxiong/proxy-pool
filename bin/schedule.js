@@ -6,9 +6,9 @@ const log = require('pino')().child({file: __filename.slice(__dirname.length + 1
 const request = require('request');
 const schedule = require('node-schedule');
 const xdaili = require('../lib/collect_service').xdaili;
-
+log.info('schedules start');
 //
-const j = schedule.scheduleJob('*/5 */1 * * * *', function () {
+const j = schedule.scheduleJob('*/5 * * * *', function () {
 
     request.post({
         url: "http://localhost:2345/provide",
